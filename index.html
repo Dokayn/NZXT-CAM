@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NZXT Web Integration</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #time {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        #stats {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="time">Lade Uhrzeit...</div>
+    <div id="stats">Lade Systemdaten...</div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('de-DE');
+            document.getElementById('time').innerText = timeString;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        window.nzxt = {
+            v1: {
+                onMonitoringDataUpdate: (data) => {
+                    const cpuLoad = data.cpus[0]?.load || 0;
+                    const gpuLoad = data.gpus[0]?.load || 0;
+                    document.getElementById('stats').innerText = `CPU: ${cpuLoad.toFixed(1)}% | GPU: ${gpuLoad.toFixed(1)}%`;
+                }
+            }
+        };
+    </script>
+</body>
+</html>
