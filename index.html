@@ -7,50 +7,79 @@
     <style>
         body {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #1e1e2e, #3a3a55);
+            background: black;
             color: white;
             font-family: 'Arial', sans-serif;
             text-align: center;
         }
-        #time {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
+        .container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(50,50,50,1) 60%, rgba(0,0,0,1) 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
-        #stats {
-            font-size: 1.8rem;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            font-size: 1rem;
+        }
+        .stats div {
+            flex: 1;
+        }
+        .icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        .temperature {
+            font-size: 1.2rem;
+            color: cyan;
+        }
+        .load {
+            font-size: 1rem;
+            color: lightblue;
         }
     </style>
 </head>
 <body>
-    <div id="time">Lade Uhrzeit...</div>
-    <div id="stats">Lade Systemdaten...</div>
+    <div class="container">
+        <div class="stats">
+            <div>
+                <div class="icon">🖥️</div>
+                <div>i7-13700K</div>
+                <div class="temperature" id="cpuTemp">--°</div>
+                <div class="load" id="cpuLoad">--%</div>
+            </div>
+            <div>
+                <div class="icon">🎮</div>
+                <div>RTX 4080</div>
+                <div class="temperature" id="gpuTemp">--°</div>
+                <div class="load" id="gpuLoad">--%</div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('time').innerText = timeString;
-        }
-
-        setInterval(updateClock, 1000);
-        updateClock();
-
         window.nzxt = {
             v1: {
                 onMonitoringDataUpdate: (data) => {
+                    const cpuTemp = data.cpus[0]?.temperature || 0;
                     const cpuLoad = data.cpus[0]?.load || 0;
+                    const gpuTemp = data.gpus[0]?.temperature || 0;
                     const gpuLoad = data.gpus[0]?.load || 0;
-                    document.getElementById('stats').innerText = `CPU: ${cpuLoad.toFixed(1)}% | GPU: ${gpuLoad.toFixed(1)}%`;
+                    document.getElementById('cpuTemp').innerText = `${cpuTemp}°`;
+                    document.getElementById('cpuLoad').innerText = `${cpuLoad}%`;
+                    document.getElementById('gpuTemp').innerText = `${gpuTemp}°`;
+                    document.getElementById('gpuLoad').innerText = `${gpuLoad}%`;
                 }
             }
         };
